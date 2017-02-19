@@ -6,33 +6,35 @@ var incoming = ""; //buffer for incoming serial information
 chrome.serial.getDevices(onGetDevices); //get devices
 
 var ac = new AudioContext();//audio context for playback
-var numVoices = 8; //number of separate audio voices
-var voices = new Array(); //array for storing voices
-var steps = new Array();//array for storing steps
-var numSteps = 8;//number of steps
+var numVoices = 8;
+var voices = new Array();
+var steps = new Array();
+var numSteps = 8;
 
-var playing = false;//playing or not
+var playing = false;
 
-var notes = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4'];//scale
+var notes = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4'];
 
 for (var voice = 0; voice < numVoices; voice ++) {
-  steps[voice] = new Array(); //array of each voices steps
-  voices[voice] = new TinyMusic.Sequence(ac, 120);//create a synth for each voice
+  steps[voice] = new Array();
+  voices[voice] = new TinyMusic.Sequence(ac, 120);
+
 }
 
 function onGetDevices(ports){
-  if (ports.length > 0) { //if there are serial devices available
-    $.each(ports, function(key, value) {//
+  if (ports.length > 0) {
+    $.each(ports, function(key, value) {
       if (value.path == preferredPort) {
-        $('#serial-select').append($('<option selected></option>').attr('value', value.path).text(value.path));//append to menu and select
-        chrome.serial.connect(preferredPort, {bitrate: 115200}, onConnect);//open connection
+        $('#serial-select').append($('<option selected></option>').attr('value', value.path).text(value.path));
+        chrome.serial.connect(preferredPort, {bitrate: 115200}, onConnect);
       }
       else if (value.path != preferredPort && connectionId < 1) {
-        $('#serial-select').append($('<option></option>').attr('value', value.path).text(value.path));//append other options
+        $('#serial-select').append($('<option></option>').attr('value', value.path).text(value.path));
       }
     });
   }
   else {
+    $("#controller-warning").html('No controllers found');
     $('#serial-select').append($('<option disabled>No devices detected!</option>'));
     $('#serial-select').prop('disabled', true);
     $("#choose-serial-port").prop('disabled', true);
@@ -45,33 +47,31 @@ function onConnect(connectionInfo){
 
 $('#choose-serial-port').on('click', function(){
   var selectedPort = $('#serial-select').val();
-  chrome.serial.connect(selectedPort, {bitrate: 115200}, onConnect);
+  chrome.serial.connect(selectedPort, {bitrate: 9600}, onConnect);
+  $('#controller-warning').fadeOut();
 });
 
 
 var onReceiveCallback = function(info) {
   if (info.connectionId == connectionId && info.data) {
     incoming += ab2str(info.data);
-    if (incoming.length < MIN_RESPONSE_LENGTH)  //ensure we get the full byte length
+    if (incoming.length < MIN_RESPONSE_LENGTH) {
         setTimeout(function() {
           //console.log('Data fragmented');
-        }, 25); //timeout and try again
+        }, 25);
         return;
     }
-    var successRead = incoming.split(":01")[1]; //got the full length? Try to split at success character
+    var successRead = incoming.split(":01")[1];
     if (successRead) {
-      reading = processCard(successRead); //get 0s and 1s from reading
-      setRows(reading); //set the table rows and synth parts
-      if (!playing) { //if we're not playing
+      reading = processCard(successRead);
+      setRows(reading);
+      if (!playing) {
         var startTime = ac.currentTime;
         for (var voice = 0; voice < numVoices; voice ++) {
           voices[voice].play(startTime);
         }
         playing = true;
       }
-    }
-    else {
-      console.log('Failed to read card');
     }
     incoming = "";
   };
