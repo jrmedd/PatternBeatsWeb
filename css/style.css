@@ -1,0 +1,38 @@
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: local('../fonts/Poppins-Regular.ttf');
+}
+
+body {
+  font-family: 'Poppins';
+}
+
+input[type="checkbox"] {
+  display:none;
+}
+
+.table {
+  border: 2px solid black!important;
+  border-radius: 3px;
+}
+.table tr {
+  height: 25px;
+}
+
+.table td {
+  border: 1px solid black;
+  width: 50px;
+  height: 50px;
+}
+
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.beat-selected {
+  animation: fadeIn .5s;
+  background-color: #009540!important;
+}

@@ -89,13 +89,16 @@ function setRows(rows) {
   $('tr').each(function(rowIndex, rowValue) {
     //iterate over columns
     $(this).find('td input').each(function(colIndex, colValue){
+      var currentCell = $(this).closest('td');
       if (rows[rowIndex][colIndex] == 1 ) {
         $(this).prop('checked', true);
+        currentCell.addClass('beat-selected');
         steps[rowIndex][colIndex] = notes[rowIndex] + ' e';
       }
       else if (rows[rowIndex][colIndex] == 0) {
         $(this).prop('checked', false);
         steps[rowIndex][colIndex] = '- e';
+        currentCell.removeClass('beat-selected');
       }
     });
     voices[rowIndex].notes = [];
