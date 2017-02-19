@@ -6,35 +6,36 @@ var incoming = ""; //buffer for incoming serial information
 chrome.serial.getDevices(onGetDevices); //get devices
 
 var ac = new AudioContext();//audio context for playback
-var numVoices = 8;
-var voices = new Array();
-var steps = new Array();
-var numSteps = 8;
+var numVoices = 8; //number of individual voices
+var voices = new Array(); //array for voice objects
+var steps = new Array(); //array for note arrays
+var numSteps = 8; //number of steps
 
-var playing = false;
+var playing = false; //playing or not
 
-var notes = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4'];
+var notes = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4']; //scales
 
 for (var voice = 0; voice < numVoices; voice ++) {
-  steps[voice] = new Array();
-  voices[voice] = new TinyMusic.Sequence(ac, 120);
-
+  steps[voice] = new Array();//setup note arrays
+  voices[voice] = new TinyMusic.Sequence(ac, 120);//setup instrument objects
 }
 
 function onGetDevices(ports){
+  //check for serial devices
   if (ports.length > 0) {
     $.each(ports, function(key, value) {
+      //if preferred port
       if (value.path == preferredPort) {
-        $('#serial-select').append($('<option selected></option>').attr('value', value.path).text(value.path));
-        chrome.serial.connect(preferredPort, {bitrate: 115200}, onConnect);
+        $('#serial-select').append($('<option selected></option>').attr('value', value.path).text(value.path));//select
+        chrome.serial.connect(preferredPort, {bitrate: 115200}, onConnect);//conect
       }
       else if (value.path != preferredPort && connectionId < 1) {
+        //add other options
         $('#serial-select').append($('<option></option>').attr('value', value.path).text(value.path));
       }
     });
   }
   else {
-    $("#controller-warning").html('No controllers found');
     $('#serial-select').append($('<option disabled>No devices detected!</option>'));
     $('#serial-select').prop('disabled', true);
     $("#choose-serial-port").prop('disabled', true);
@@ -47,7 +48,7 @@ function onConnect(connectionInfo){
 
 $('#choose-serial-port').on('click', function(){
   var selectedPort = $('#serial-select').val();
-  chrome.serial.connect(selectedPort, {bitrate: 9600}, onConnect);
+  chrome.serial.connect(selectedPort, {bitrate: 115200}, onConnect);
   $('#controller-warning').fadeOut();
 });
 
@@ -73,6 +74,9 @@ var onReceiveCallback = function(info) {
         playing = true;
       }
     }
+    else {
+      console.log("Failed to read card.");
+    }
     incoming = "";
   };
 };
@@ -81,7 +85,9 @@ function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
 };
 function setRows(rows) {
+  //iterate over table rows
   $('tr').each(function(rowIndex, rowValue) {
+    //iterate over columns
     $(this).find('td input').each(function(colIndex, colValue){
       if (rows[rowIndex][colIndex] == 1 ) {
         $(this).prop('checked', true);
