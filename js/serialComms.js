@@ -123,6 +123,7 @@ function toBitList(input) {
 		var base2 = input[i].toString(2); //convert to base-2 (binary)
 	  base2 = padZeroes(base2, 8);
 	  base2 = base2.split("").map(Number); //convert array of strings to integers
+    base2.reverse(); //reverse order
 		bitList.push(base2);
 	}
 	return bitList;
