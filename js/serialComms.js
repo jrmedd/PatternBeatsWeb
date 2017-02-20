@@ -1,4 +1,4 @@
-var preferredPort = '/dev/cu.usbmodem1421'; //preferred serial port (automatically picked)
+var preferredPort = '/dev/ttyACM0'; //preferred serial port (automatically picked)
 var connectionId = -1; //null connection id before serial connection
 var MIN_RESPONSE_LENGTH = 37; //number of bytes expected from card read
 var incoming = ""; //buffer for incoming serial information
