@@ -13,7 +13,7 @@ var numSteps = 8; //number of steps
 
 var playing = false; //playing or not
 
-var notes = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4']; //scales
+var scale = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4']; //scales
 
 for (var voice = 0; voice < numVoices; voice ++) {
   steps[voice] = new Array();//setup note arrays
@@ -93,18 +93,15 @@ function setRows(rows) {
       if (rows[rowIndex][colIndex] == 1 ) {
         $(this).prop('checked', true);
         currentCell.addClass('beat-selected');
-        steps[rowIndex][colIndex] = notes[rowIndex] + ' e';
+        steps[rowIndex][colIndex] = new TinyMusic.Note(scale[rowIndex] + ' e');
       }
       else if (rows[rowIndex][colIndex] == 0) {
         $(this).prop('checked', false);
-        steps[rowIndex][colIndex] = '- e';
+        steps[rowIndex][colIndex] = new TinyMusic.Note('- e');
         currentCell.removeClass('beat-selected');
       }
     });
-    voices[rowIndex].notes = [];
-    for (note = 0; note < steps[rowIndex].length; note ++) {
-      voices[rowIndex].push(new TinyMusic.Note(steps[rowIndex][note]));
-    }
+    voices[rowIndex].notes = steps[rowIndex];
   });
 }
 
