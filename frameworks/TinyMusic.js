@@ -196,6 +196,20 @@ Sequence.prototype.play = function( when ) {
 
   this.notes.forEach(function( note, i ) {
     when = this.scheduleNote( i, when );
+    /*EXPERIMENTAL VISUAL FEEDBACK
+    setTimeout(function(){
+      $('#sequencer').find('tr').each(function(rowIndex, rowValue){
+        $(this).find('td').each(function(colIndex, colValue){
+          if (colIndex == i) {
+            $(this).addClass('current-beat');
+          }
+          else {
+            $(this).removeClass('current-beat');
+          }
+        });
+      });
+    },(when*1000)-(this.ac.currentTime*1000));
+    */
   }.bind( this ));
 
   this.osc.stop( when );

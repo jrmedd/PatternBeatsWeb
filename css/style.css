@@ -32,9 +32,13 @@ input[type="checkbox"] {
   100% { opacity: 1; }
 }
 
-.beat-selected {
+.current-beat .beat-selected, .beat-selected {
   animation: fadeIn .5s;
   background-color: #009540!important;
+}
+
+.current-beat {
+ background-color: #a4f4c6;
 }
 
 div#serial-widget {
