@@ -13,13 +13,27 @@ var numSteps = 8; //number of steps
 
 var playing = false; //playing or not
 
-var scale = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4']; //scales
+var scale = ['C4', 'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3']; //scales
 
 for (var voice = 0; voice < numVoices; voice ++) {
   steps[voice] = new Array();//setup note arrays
   voices[voice] = new TinyMusic.Sequence(ac, 120);//setup instrument objects
 }
 
+for (var row = 0; row < numVoices; row ++) {
+  var tr = $('<tr>');
+  for (var col = 0; col < numSteps; col ++) {
+    $('<td></td>').appendTo(tr);
+  }
+  tr.appendTo('#sequencer');
+};
+/*
+$('#sequencer tr').each(function(val, index) {
+  for (var col = 0; col < 8; col ++) {
+    $(this).append('<td></td>');
+  }
+});
+*/
 function onGetDevices(ports){
   //check for serial devices
   if (ports.length > 0) {
@@ -88,15 +102,13 @@ function setRows(rows) {
   //iterate over table rows
   $('tr').each(function(rowIndex, rowValue) {
     //iterate over columns
-    $(this).find('td input').each(function(colIndex, colValue){
+    $(this).find('td').each(function(colIndex, colValue){
       var currentCell = $(this).closest('td');
       if (rows[rowIndex][colIndex] == 1 ) {
-        $(this).prop('checked', true);
         currentCell.addClass('beat-selected');
         steps[rowIndex][colIndex] = new TinyMusic.Note(scale[rowIndex] + ' e');
       }
       else if (rows[rowIndex][colIndex] == 0) {
-        $(this).prop('checked', false);
         steps[rowIndex][colIndex] = new TinyMusic.Note('- e');
         currentCell.removeClass('beat-selected');
       }
