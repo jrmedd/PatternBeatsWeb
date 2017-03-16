@@ -23,11 +23,7 @@ for (var voice = 0; voice < numVoices; voice ++) {
 
 $('#tempo-display').html(tempo + " BPM");
 $("#tempo-adjust").on('change', function(){
-  tempo = $(this).val();
-  $('#tempo-display').html(tempo + " BPM");
-  for (var voice = 0; voice < numVoices; voice ++) {
-    voices[voice].tempo = tempo;
-  }
+  changeTempo($(this).val());
 })
 for (var row = 0; row < numVoices; row ++) {
   var tr = $('<tr>');
@@ -150,6 +146,7 @@ function padZeroes(input, amount) {
 }
 
 function changeTempo(tempoChange) {
+  $('#tempo-display').html(tempoChange + " BPM");
   for (voice = 0; voice < numVoices; voice ++) {
     voices[voice].tempo = tempoChange;
   }
