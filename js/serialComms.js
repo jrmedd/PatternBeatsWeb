@@ -10,6 +10,7 @@ var numVoices = 8; //number of individual voices
 var voices = new Array(); //array for voice objects
 var steps = new Array(); //array for note arrays
 var numSteps = 8; //number of steps
+var tempo = 120;
 
 var playing = false; //playing or not
 
@@ -17,9 +18,17 @@ var scale = ['C4', 'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3']; //scales
 
 for (var voice = 0; voice < numVoices; voice ++) {
   steps[voice] = new Array();//setup note arrays
-  voices[voice] = new TinyMusic.Sequence(ac, 120);//setup instrument objects
+  voices[voice] = new TinyMusic.Sequence(ac, tempo);//setup instrument objects
 }
 
+$('#tempo-display').html(tempo + " BPM");
+$("#tempo-adjust").on('change', function(){
+  tempo = $(this).val();
+  $('#tempo-display').html(tempo + " BPM");
+  for (var voice = 0; voice < numVoices; voice ++) {
+    voices[voice].tempo = tempo;
+  }
+})
 for (var row = 0; row < numVoices; row ++) {
   var tr = $('<tr>');
   for (var col = 0; col < numSteps; col ++) {
@@ -27,13 +36,7 @@ for (var row = 0; row < numVoices; row ++) {
   }
   tr.appendTo('#sequencer');
 };
-/*
-$('#sequencer tr').each(function(val, index) {
-  for (var col = 0; col < 8; col ++) {
-    $(this).append('<td></td>');
-  }
-});
-*/
+
 function onGetDevices(ports){
   //check for serial devices
   if (ports.length > 0) {
@@ -82,10 +85,7 @@ var onReceiveCallback = function(info) {
       setRows(reading);
       if (!playing) {
         var startTime = ac.currentTime;
-        for (var voice = 0; voice < numVoices; voice ++) {
-          voices[voice].play(startTime);
-        }
-        playing = true;
+        playStop(startTime);
       }
     }
     else {
@@ -98,6 +98,10 @@ var onReceiveCallback = function(info) {
 function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
 };
+
+$("#play-stop").on('click', function() {
+  playStop();
+})
 function setRows(rows) {
   //iterate over table rows
   $('tr').each(function(rowIndex, rowValue) {
@@ -143,6 +147,29 @@ function padZeroes(input, amount) {
 		input = "0" + input;
 	}
 	return input;
+}
+
+function changeTempo(tempoChange) {
+  for (voice = 0; voice < numVoices; voice ++) {
+    voices[voice].tempo = tempoChange;
+  }
+}
+
+function playStop(startPlaying) {
+  if (playing) {
+    $("#play-stop").html("PLAY")
+    for (voice = 0; voice < numVoices; voice ++) {
+      voices[voice].stop();
+      playing = false;
+    }
+  }
+  else {
+    $("#play-stop").html("STOP");
+    for (voice = 0; voice < numVoices; voice ++) {
+      voices[voice].play(startPlaying);
+      playing = true;
+    }
+  }
 }
 
 chrome.serial.onReceive.addListener(onReceiveCallback);
