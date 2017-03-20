@@ -19,6 +19,7 @@ var scale = ['C4', 'B3', 'A3', 'G3', 'F3', 'E3', 'D3', 'C3']; //scales
 for (var voice = 0; voice < numVoices; voice ++) {
   steps[voice] = new Array();//setup note arrays
   voices[voice] = new TinyMusic.Sequence(ac, tempo);//setup instrument objects
+  voices[voice].gain.gain.value = 1./numVoices;
 }
 
 $('#tempo-display').html(tempo + " BPM");

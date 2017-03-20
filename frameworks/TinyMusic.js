@@ -208,8 +208,8 @@ Sequence.prototype.play = function( when ) {
           }
         });
       });
-    },(when*1000)-(this.ac.currentTime*1000));
-    */
+      console.log(i);
+    },((((when*1000)-(60/tempo*1000))-(this.ac.currentTime*1000))));*/
   }.bind( this ));
 
   this.osc.stop( when );
