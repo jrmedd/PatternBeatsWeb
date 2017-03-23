@@ -20,6 +20,7 @@ for (var voice = 0; voice < numVoices; voice ++) {
   steps[voice] = new Array();//setup note arrays
   voices[voice] = new TinyMusic.Sequence(ac, tempo);//setup instrument objects
   voices[voice].gain.gain.value = 1./numVoices;
+  voices[voice].staccato = 0.25
 }
 
 $('#tempo-display').html(tempo + " BPM");
