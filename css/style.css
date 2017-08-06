@@ -51,3 +51,7 @@ select {
   -webkit-appearance: none;
   -webkit-border-radius: 0px;
 }
+
+#disconnect-error {
+  display: none;
+}

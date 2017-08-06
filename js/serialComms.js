@@ -2,6 +2,7 @@ var preferredPort = '/dev/ttyACM0'; //preferred serial port (automatically picke
 var connectionId = -1; //null connection id before serial connection
 var MIN_RESPONSE_LENGTH = 37; //number of bytes expected from card read
 var incoming = ""; //buffer for incoming serial information
+var selectedPort;
 
 chrome.serial.getDevices(onGetDevices); //get devices
 
@@ -59,10 +60,12 @@ function onGetDevices(ports){
 
 function onConnect(connectionInfo){
   connectionId = connectionInfo.connectionId;
+  $("#disconnect-error").slideUp();
+  console.log("Connected to reader");
 };
 
 $('#choose-serial-port').on('click', function(){
-  var selectedPort = $('#serial-select').val();
+  selectedPort = $('#serial-select').val();
   chrome.serial.connect(selectedPort, {bitrate: 115200}, onConnect);
   $('#controller-warning').fadeOut();
 });
@@ -92,6 +95,15 @@ var onReceiveCallback = function(info) {
     incoming = "";
   };
 };
+
+var onErrorCallback = function(info) {
+  console.log(info.error);
+  chrome.serial.disconnect(info.connectionId, function(){
+  console.log("Serial connection closed");
+  connectionId = -1;
+  $("#disconnect-error").slideDown();
+});
+}
 
 function ab2str(buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
@@ -172,3 +184,4 @@ function playStop(startPlaying) {
 }
 
 chrome.serial.onReceive.addListener(onReceiveCallback);
+chrome.serial.onReceiveError.addListener(onErrorCallback)
